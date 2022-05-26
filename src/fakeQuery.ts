@@ -1,3 +1,6 @@
+import { css } from "./modules/css";
+import { addClass } from "./modules/addClass";
+
 export function htmlToElement(str: string) {
   const template = document.createElement("template");
   str = str.trim();
@@ -6,7 +9,6 @@ export function htmlToElement(str: string) {
 }
 
 class fQueryObject {
-  private name: string = "";
   public length: number = 0;
 
   setElements(ar: NodeList) {
@@ -29,26 +31,32 @@ export default function $(what: any) {
   }
 }
 
-function css(...args: any[]) {
-  const obj = args[0];
-  for (let o in obj) {
-    // @ts-ignore
-    this.style[o] = obj[o];
-  }
-}
+const modifyingFunctions = { css, addClass };
 
-function addClass(className: string) {
-  this.classList.add(className);
-}
-
-var functions = { css, addClass };
-
-Object.keys(functions).forEach((name) => [
-  (fQueryObject.prototype[name] = function (...args: any[]) {
+Object.keys(modifyingFunctions).forEach((functionName: string) => {
+  // @ts-ignore
+  fQueryObject.prototype[functionName] = function (...args: any[]) {
     for (let i = 0; i < this.length; i++) {
-      let fn = functions[name];
-      fn.call(this[i], ...args);
+      // @ts-ignore
+      let fn = modifyingFunctions[functionName];
+      // @ts-ignore
+      const element = this[i];
+
+      // so incase function passed
+      const newArgs = args.map((argument: any) => {
+        if (typeof argument === "function") {
+          if (functionName === "addClass") {
+            return argument(i, [...element.classList]);
+          }
+
+          return argument(i);
+        }
+
+        return argument;
+      });
+      // @ts-ignore
+      this[i] = fn(element, ...newArgs);
     }
     return this;
-  }),
-]);
+  };
+});

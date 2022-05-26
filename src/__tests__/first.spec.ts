@@ -15,20 +15,40 @@ describe("first", () => {
   });
 
   test("htmlToElement", function () {
-    var el = htmlToElement(
+    var el: HTMLElement = htmlToElement(
       "<div><h2 class='title'>welcome</h2>dwdwdw<h2 class='title'>go gjoe</h2></div>"
-    );
+    ) as HTMLElement;
     document.body.append(el);
     const titles = document.querySelector(".title");
 
     expect(titles).not.toBeNull();
   });
-});
 
-describe("first", () => {
-  const ko: number = 2;
-  console.log(document);
-  test("css selector", () => {
-    expect(1).toBe(1);
+  test("addClass selector", () => {
+    document.body.innerHTML = `
+    
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    
+    
+    `;
+
+    // @ts-ignore
+    const el = $(".picture")
+      // @ts-ignore
+      .addClass(function (num: number, classList: any) {
+        return "p" + num;
+      })
+      // @ts-ignore
+      .addClass("ldldl")
+      // @ts-ignore
+      .addClass(() => Math.random() + "dlldl");
+
+    console.log(document.body.innerHTML);
   });
 });

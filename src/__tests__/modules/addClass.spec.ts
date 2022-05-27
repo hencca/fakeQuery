@@ -1,6 +1,6 @@
 import { addClass } from "../../modules/addClass";
 
-test("css", function () {
+test("addClass", function () {
   let el: HTMLElement = document.createElement("div");
   el = addClass(el, "monkey");
   el = addClass(el, "banana");

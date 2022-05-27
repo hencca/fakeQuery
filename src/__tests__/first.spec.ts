@@ -45,10 +45,36 @@ describe("first", () => {
         return "p" + num;
       })
       // @ts-ignore
-      .addClass("ldldl")
+      .addClass("just_text")
       // @ts-ignore
-      .addClass(() => Math.random() + "dlldl");
+      .addClass(() => Math.random() + "_rand");
 
-    console.log(document.body.innerHTML);
+    expect(
+      document.querySelectorAll(".picture")[0].classList.contains("just_text")
+    ).toBe(true);
+  });
+
+  test("removeClass selector", () => {
+    document.body.innerHTML = `
+    
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    <div class="picture"></div>
+    
+    
+    `;
+
+    // @ts-ignore
+    const el = $(".picture").removeClass("picture");
+
+    expect(
+      document.querySelectorAll("div")[0].classList.contains("picture")
+    ).toBe(false);
+
+    expect(document.body.innerHTML.indexOf("picture")).toBe(-1);
   });
 });

@@ -1,10 +1,73 @@
 import { css } from "./modules/css";
 import { addClass } from "./modules/addClass";
 import { removeClass } from "./modules/removeClass";
-
+import animate from "./modules/animate";
+let num = 0;
 // Using function because class gave me a bunch of
 // typescript errors when trying to add methods dynamically
 function fQueryObject() {}
+
+class Anim {
+  constructor(fn) {
+    this.thenFunctions = [];
+    this.animFunction = fn;
+  }
+
+  then(fn) {
+    this.thenFunctions.push(fn);
+  }
+
+  start() {
+    console.log("start anim " + Anim.prototype.counter);
+    Anim.prototype.counter++;
+    this.animFunction().then(() => {
+      this.thenFunctions.forEach((el) => {
+        el();
+      });
+    });
+  }
+}
+
+Anim.prototype.counter = 0;
+
+fQueryObject.prototype.animate = function (
+  obj: Record<string, any>,
+  duration: number
+) {
+  const fn = () => {
+    num++;
+    return new Promise((resolve) => {
+      const promises = [];
+      for (let i = 0; i < this.length; i++) {
+        const el = this[i];
+        promises.push(animate(el, obj, duration));
+      }
+      Promise.all(promises).then(() => {
+        resolve();
+      });
+    });
+  };
+
+  // return new Promise((resolve) => {});
+
+  if (!this.animations) {
+    this.animations = [];
+  }
+
+  this.animations.push(new Anim(fn));
+
+  if (this.animations.length === 1) {
+    this.animations[0].start();
+  } else {
+    const prevAnim = this.animations[this.animations.length - 2];
+    const nextAnim = this.animations[this.animations.length - 1];
+    prevAnim.then(() => {
+      nextAnim.start();
+    });
+  }
+
+  return this;
+};
 
 fQueryObject.prototype.queryElements = function (str: string) {
   this.setElements(document.querySelectorAll(str));
